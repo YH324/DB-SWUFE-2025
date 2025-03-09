@@ -52,9 +52,9 @@ WHERE capacity = (SELECT MAX(capacity) FROM classroom);
 
 ### 2.DeepSeek R1 回答
 ![image](https://github.com/user-attachments/assets/7f06bae9-1b72-4d8a-96b7-4e0865677dad)
-![TP3 U81Z`VQW8P}R2 CO}FC](https://github.com/user-attachments/assets/a9de61c9-2e09-4b26-8e12-5d1ab9f7e393)
-要找出容量最大的教室房间号，可以使用以下SQL查询：
+
 #### 2.1回答
+要找出容量最大的教室房间号，可以使用以下SQL查询：
 ```sql
 SELECT room_number
 FROM classroom
@@ -70,6 +70,7 @@ WHERE capacity = (SELECT MAX(capacity) FROM classroom);
 - 若需要同时显示楼栋信息，可在 `SELECT` 子句中添加 `building` 字段。
 
 #### 2.2推理
+![TP3 U81Z`VQW8P}R2 CO}FC](https://github.com/user-attachments/assets/a9de61c9-2e09-4b26-8e12-5d1ab9f7e393)
 好的，我需要找出容量最大的教室房间号。首先，我应该看一下这个classroom表的结构。表里有building、room_number和capacity三个字段，主键是building和room_number的组合。这意味着每个房间是由楼栋和房间号共同唯一确定的。
 
 现在问题是要找出容量最大的那个房间的room_number。容量最大的可能有多个房间，比如如果有多个房间的capacity都是相同的最大值，这时候可能需要返回多个结果。不过题目里没说明是否会有多个最大值的情况，可能需要先确认是否需要处理这种情况。但根据一般情况，可能只需要找出最大的那个或者所有最大的。
