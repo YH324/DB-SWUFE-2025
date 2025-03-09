@@ -8,7 +8,7 @@
 - 行称为元组，表示一组相关数据的集合。
 - 列称为属性，定义数据的类型和含义。
 
-> 参考课件，使用LLM `grok-3-reasoner`辅助
+> 参考课件，使用LLM `grok-3-reasoner`辅助润色
 
 ## 问题三
 
@@ -36,6 +36,7 @@ WHERE capacity = (SELECT MAX(capacity) FROM classroom);
 ---
 
 > 使用**Apifox**调用LLM
+[Apifox](https://app.apifox.com/main)
 
 ### 1.DeepSeek V3 回答
 ![image](https://github.com/user-attachments/assets/c3374deb-1a8d-463a-a558-d6a28c85ce98)
@@ -51,9 +52,9 @@ WHERE capacity = (SELECT MAX(capacity) FROM classroom);
 如果有多间教室的容量相同且都是最大值，这个查询将返回所有容量最大的教室的房间号。
 
 ### 2.DeepSeek R1 回答
-![image](https://github.com/user-attachments/assets/7f06bae9-1b72-4d8a-96b7-4e0865677dad)
 
 #### 2.1回答
+![image](https://github.com/user-attachments/assets/7f06bae9-1b72-4d8a-96b7-4e0865677dad)
 要找出容量最大的教室房间号，可以使用以下SQL查询：
 ```sql
 SELECT room_number
@@ -78,8 +79,11 @@ WHERE capacity = (SELECT MAX(capacity) FROM classroom);
 接下来，我需要写一个SQL查询。首先，我需要找到最大的容量值，可以用MAX函数。然后，根据这个最大值来筛选对应的房间号。例如：
 
 SELECT room_number
+
 FROM classroom
+
 WHERE capacity = (SELECT MAX(capacity) FROM classroom);
+
 不过这里有个问题，因为主键是building和room_number的组合，所以可能存在不同楼栋有相同房间号的情况。比如，building A和building B可能都有一个room_number 101，这时候如果只返回room_number可能会有重复。但题目可能只需要房间号，不管楼栋的话，这样查询是可以的。但用户可能需要同时显示楼栋和房间号，但问题里只要求房间号，所以可能没问题。
 
 不过是否需要包括building呢？题目里是“找出容量最大的教室房间号”，而房间号可能在不同楼栋中存在重复，所以严格来说可能需要同时显示building和room_number。但问题里只要求room_number，那可能用户只想要房间号，但可能存在多个不同楼栋的同房间号，但容量最大的情况。不过这种情况比较少见，可能用户只需要房间号，不管楼栋。
