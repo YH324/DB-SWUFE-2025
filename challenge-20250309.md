@@ -98,4 +98,10 @@ WHERE capacity = (SELECT MAX(capacity) FROM classroom);
 
 > 参考[DeepSeek API文档](https://api-docs.deepseek.com/zh-cn/) 以及 [Apifox使用文档](https://apifox.com/apiskills/deepseek-api-debugging/)
 
-## 问题四
+## 问题四：为什么在python中{[1,2]}不合法？
+
+- {[1,2]}在python中表示含有`[1,2]`的集合(set)，集合的元素是不可重复且**不可变的**，然而在示例中集合的元素是列表[1,2]，列表(list)是可变的，可以通过函数实现增、删。
+- 集合内部使用了一种叫做“哈希”（hashing）的技术。哈希就像给每个元素贴一个独一无二的标签，这样集合就能快速找到它们。可变的东西（像列表）会随时改变自己的“形状”，所以它没有固定的哈希值。Python 就没法给它贴标签，也就不能把它放进集合里。
+
+> LLM `grok-3-reasoner` 解答哈希部分
+
