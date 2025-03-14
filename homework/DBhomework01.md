@@ -42,6 +42,7 @@ $$\Pi_{ID}(\sigma_{branch\_name='杨柳支行'}(loan)\bowtie borrower)$$
 4. 登录成功后可以进一步显示用户信息`gender`：$$\Pi_{gender}(\sigma_{name='input\_name'\land pswd='input\_pswd'}(users)$$
    - 页面显示：“欢迎您：name 男士/女士 ”
 
-![](graph/01.png)
+![](../image/01.png)
+
 
 </font>
