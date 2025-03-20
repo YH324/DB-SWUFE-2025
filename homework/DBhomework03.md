@@ -70,3 +70,4 @@ WHERE dept_name LIKE 'his%';
 SELECT dept_name FROM department
 WHERE lower(dept_name) LIKE '%sci%';
 ```
+完成
