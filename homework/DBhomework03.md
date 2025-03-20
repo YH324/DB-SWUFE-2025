@@ -1,5 +1,3 @@
-![image](https://github.com/user-attachments/assets/c3058742-a2e7-43e9-96a1-d608a53b614c)本周通过Postgresql软件实践基本的SQL，并学习了集合操作等知识。
-
 # Lab Homework
 <p align = 'right'>42227096 鄢怡然</p>
 
