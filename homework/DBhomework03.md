@@ -26,7 +26,9 @@ FROM instructor AS T, instructor AS S
 WHERE T.salary > S.salary AND S.dept_name = 'History';
 ```
 
-表示找到所有**薪资比历史学院`至少一位`教师工资高的教师姓名**。
+- 表示找到所有**薪资比历史学院`至少一位`教师工资高的教师姓名**。
+![alt text](c2702b1f8f7503f97b7443ae3f185852.png)
+结果为**无**。
 
 ---
 
@@ -40,21 +42,24 @@ WHERE T.salary > S.salary AND S.dept_name = 'History';
 SELECT name FROM instructor
 WHERE name LIKE 'S%';
 ```
-查询结果
+- 查询结果
+![alt text](49040b8d29a0f15c8ed3ae8afbcf7cb9.png)
 
 2. SIMILAR TO
 ```sql
 SELECT name FROM instructor
 WHERE name SIMILAR TO 'S%';
 ```
-查询结果
+- 查询结果
+![alt text](ac62ea241b13666706c187b86cd42579.png)
 
 3. POSIX Regular Expressions
 ```sql
 SELECT name FROM instructor
 WHERE name ~ '^S';
 ```
-查询结果
+- 查询结果
+![alt text](d6a43fae2a132fcc232db4b0b7708fb4.png)
 
 ---
 
@@ -72,8 +77,8 @@ Port [5432]:
 Username [postgres]:
 用户 postgres 的口令：
 ```
-执行题目二查询语句，查询及结果如下：
-    
+执行**题目二**查询语句，查询及结果如下：
+
 ```
 university=# SELECT name FROM instructor
 university-# WHERE name LIKE 'S%';
@@ -112,6 +117,7 @@ university-# WHERE name ~ '^S';
 ```
 
 2. 列出所有的数据库
+
 使用`\l`命令
 ```
 postgres=# \l
@@ -129,6 +135,7 @@ postgres=# \l
 ```
 
 3. 列出当前数据库的所有表
+
 以数据库`university`为例，使用`\d`命令
 ```
 university=# \d
@@ -150,6 +157,7 @@ university=# \d
 ```
 
 4. 显示某张表的关系模式
+
 以数据库`university`下的`instructor`为例，使用`\d instructor`命令
 ```
 university=# \d instructor
