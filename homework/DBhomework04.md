@@ -22,9 +22,17 @@ FROM instructor
 WHERE AVG(salary) > 20000;
 ```
 
-- 第一句不合法，需要对`SELECT`中未聚合的项进行分组
-- 第二句合法
-- 第三句不合法，`WHERE`中的条件项生效早于聚合函数
+- 第一句不合法，`SELECT`的子句属性如果没有在聚集函数中，就要出现在`GROUP BY`子句
+
+**添加GROUP BY后**
+
+- 第二句不合法，出现在`HAVING`子句且没有被聚集的属性只能出现在`GROUP BY`子句
+
+**添加GROUP BY name后**
+
+- 第三句不合法，`WHERE`子句谓词生效早于聚合函数，即`>`先生效，所以聚合函数不可放在`WHERE`子句中。
+
+**改成HAVEING子句,添加GROUP BY和SELECT属性**
 
 ---
 
@@ -45,16 +53,55 @@ SELECT (1) IN (1, 2);
 ```
 
 1. 两种写法：
-   - 1
-   - 2
+   - 子查询+WHERE
+```sql
+SELECT DISTINCT name,salary
+FROM instructor
+WHERE salary = (SELECT max(salary)
+                FROM instructor);
+```
+
+   - ORDER BY + LIMIT 1
+```sql
+SELECT name, salary
+FROM instructor
+ORDER BY salary DESC
+LIMIT 1;
+```
 
 2. n种写法：
-   - 1
-   - 2
-   - 3
+   - 子查询 + WHERE
+```sql
+SELECT name,salary
+FROM instructor
+WHERE salary = (SELECT max(salary)
+                FROM instructor);
+```
+   - ORDER BY + LIMIT 10
+```sql
+SELECT name, salary
+FROM instructor
+ORDER BY salary DESC
+LIMIT 10;
+```
+先找最高的10位，发现最高的只有1位；如果存在多位最高者，根据查询结果调整LIMIT子句
+
+   - ALL
+```sql
+SELECT name, salary
+FROM instructor
+WHERE salary >= ALL (SELECT salary FROM instructor);
+```
 
 3. 解释：
-   - `SELECT 1 IN (1);`
-   - `SELECT 1 = (1);`
-   - `SELECT (1, 2) = (1, 2);`
-   - `SELECT (1) IN (1, 2);`
+   - `SELECT 1 IN (1);`：查询值`1`是否在`集合（1）`中
+返回true
+
+   - `SELECT 1 = (1);`：查询值`1`是否等于`（1）`，`（1）`会被解析为值1
+返回true
+
+   - `SELECT (1, 2) = (1, 2);`：查询`(1, 2)`长度及对应元素位置是否与`(1, 2)`完全一致
+返回true
+
+   - `SELECT (1) IN (1, 2);`：查询`(1)`是否在`集合(1, 2)`中，`（1）`会被解析为值1
+返回true
