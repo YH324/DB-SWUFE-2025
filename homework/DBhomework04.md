@@ -25,15 +25,15 @@ WHERE AVG(salary) > 20000;
 - 第一句不合法，`SELECT`的子句属性如果没有在聚集函数中，就要出现在`GROUP BY`子句
 ！[](../image/4.1.1.1.png)
 **添加GROUP BY后**
-![](4.1.1.2.png)
+![](../image/4.1.1.2.png)
 - 第二句不合法，出现在`HAVING`子句且没有被聚集的属性只能出现在`GROUP BY`子句
-！[](4.1.2.1.png)
+！[](../image/4.1.2.1.png)
 **添加GROUP BY name后**
-！[](4.1.2.2.png)
+！[](../image/4.1.2.2.png)
 - 第三句不合法，`WHERE`子句谓词生效早于聚合函数，即`>`先生效，所以聚合函数不可放在`WHERE`子句中。
-！[](4.1.3.1.png)
+！[](../image/4.1.3.1.png)
 **改成HAVEING子句,添加GROUP BY和SELECT属性**
-！[](4.1.3.2.png)
+！[](../image/4.1.3.2.png)
 ---
 
 ## 题目二（3分+3分+2分）
@@ -60,7 +60,7 @@ FROM instructor
 WHERE salary = (SELECT max(salary)
                 FROM instructor);
 ```
-！[](4.2.1.1.png)
+！[](../image/4.2.1.1.png)
    - ORDER BY + LIMIT 1
 ```sql
 SELECT name, salary
@@ -68,7 +68,7 @@ FROM instructor
 ORDER BY salary DESC
 LIMIT 1;
 ```
-！[](4.2.1.2.png)
+！[](../image/4.2.1.2.png)
 2. n种写法：
    - 子查询 + WHERE
 ```sql
@@ -77,7 +77,7 @@ FROM instructor
 WHERE salary = (SELECT max(salary)
                 FROM instructor);
 ```
-！[](4.2.2.1.png)
+！[](../image/4.2.2.1.png)
    - ORDER BY + LIMIT 10
 ```sql
 SELECT name, salary
@@ -86,24 +86,24 @@ ORDER BY salary DESC
 LIMIT 10;
 ```
 先找最高的10位，发现最高的只有1位；如果存在多位最高者，根据查询结果调整LIMIT子句
-！[](4.2.2.2.png)
+！[](../image/4.2.2.2.png)
    - ALL
 ```sql
 SELECT name, salary
 FROM instructor
 WHERE salary >= ALL (SELECT salary FROM instructor);
 ```
-！[](4.2.2.3.png)
+！[](../image/4.2.2.3.png)
 3. 解释：
    - `SELECT 1 IN (1);`：查询值`1`是否在`集合（1）`中
 返回true
-！[](4.2.3.1.png)
+！[](../image/4.2.3.1.png)
    - `SELECT 1 = (1);`：查询值`1`是否等于`（1）`，`（1）`会被解析为值1
 返回true
-！[](4.2.3.2.png)
+！[](../image/4.2.3.2.png)
    - `SELECT (1, 2) = (1, 2);`：查询`(1, 2)`长度及对应元素位置是否与`(1, 2)`完全一致
 返回true
-！[](4.2.3.3.png)
+！[](../image/4.2.3.3.png)
    - `SELECT (1) IN (1, 2);`：查询`(1)`是否在`集合(1, 2)`中，`（1）`会被解析为值1
 返回true
-！[](4.2.3.4.png)
+！[](../image/4.2.3.4.png)
