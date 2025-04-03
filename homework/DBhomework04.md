@@ -69,7 +69,7 @@ ORDER BY salary DESC
 LIMIT 1;
 ```
 ![](../image/4.2.1.2.png)
-2. n种写法：
+2. 3种写法：
    - 子查询 + WHERE
 ```sql
 SELECT name,salary
