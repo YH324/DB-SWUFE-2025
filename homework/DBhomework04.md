@@ -93,6 +93,14 @@ SELECT name, salary
 FROM instructor
 WHERE salary >= ALL (SELECT salary FROM instructor);
 ```
+
+   - JOIN
+```sql
+SELECT i.*
+FROM instructor i
+         JOIN (SELECT MAX(salary) AS max_salary FROM instructor) m
+              ON i.salary = m.max_salary;
+```
 ![](../image/4.2.2.3.png)
 3. 解释：
    - `SELECT 1 IN (1);`：查询值`1`是否在`集合（1）`中
