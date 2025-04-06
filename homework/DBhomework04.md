@@ -102,7 +102,7 @@ FROM instructor i
          JOIN (SELECT MAX(salary) AS max_salary FROM instructor) m
               ON i.salary = m.max_salary;
 ```
-
+![](../image/4.2.2.4.png)
 3. 解释：
    - `SELECT 1 IN (1);`：查询值`1`是否在`集合（1）`中
 返回true
