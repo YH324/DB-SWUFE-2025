@@ -2,7 +2,7 @@
 
 ---
 
-<p align='right>42227096 鄢怡然</p>
+<p align='right'>42227096 鄢怡然</p>
 
 > 考虑关系模式`product(product_no, name, price)`，完成下面的题目：
 
@@ -19,7 +19,13 @@ CREATE TABLE product (
 ```
 - txt 数据文件
 ```txt
-
+1, "milk", 10.00
+2, "bread", 15
+3, "cup", 23
+4, "bag", 44
+5, "burger", 16
+6, "beer", 19.9
+7, "pencil", 4
 ```
 
 1. 使用`COPY`命令导入数据库（PostgreSQL）。
