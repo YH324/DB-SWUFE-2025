@@ -3,8 +3,8 @@ services:
     name: sql-validator
     env: python
     plan: free
-    buildCommand: "cd project/sql-validator && pip install -r requirements.txt"
-    startCommand: "cd project/sql-validator && uvicorn main:app --host 0.0.0.0 --port 10000"
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port 10000"
     envVars:
       - key: DB_HOST
         fromDatabase:
