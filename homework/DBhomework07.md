@@ -4,6 +4,21 @@
 
 > 题目一：考虑一个用于记录学生（student）在不同课程段（section）在不同考试中取得成绩（grade）的数据库，其中课程段属于某个课程（course）。
 > 1. 绘制E-R图，只用二元联系。确保能够表示一个学生在不同考试中获得的成绩，且一个课程段可能有多次考试。（提示：使用多值属性）
+
+- 实体集
+student
+course
+section
+exam
+
+- 联系集
+student-**enrolls**-section
+section-**belongsto**-course
+exam-**in**-section
+student-**takes**-exam
+ 
+![7.1.png]
+
 > 2. 写出上面E-R图的关系模式（要求注明主码）。
 
 ---
