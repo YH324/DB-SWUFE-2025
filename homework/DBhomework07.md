@@ -17,7 +17,7 @@ section-**belongsto**-course
 exam-**in**-section
 student-**takes**-exam
 
-![](../image/7.1.png)
+![](../image/7.1.jpg)
 
 > 2. 写出上面E-R图的关系模式（要求注明主码）。
 - student(s_id PRIMARY KEY, name)
@@ -49,7 +49,7 @@ student-**takes**-exam
 
 > 题目二：如果一个关系模式中只有两个属性，证明该关系模式必定属于BCNF。
 
-![](../image/7.2.png)
+![](../image/7.2.jpg)
 
 ---
 
