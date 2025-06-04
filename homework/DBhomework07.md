@@ -20,6 +20,8 @@ student-**takes**-exam
 ![](../image/7.1.jpg)
 
 > 2. 写出上面E-R图的关系模式（要求注明主码）。
+
+```sql
 - student(s_id PRIMARY KEY, name)
 - course(course_id PRIMARY KEY, title)
 - section(section_id PRIMARY KEY, semester, course_id FOREIGN KEY REFERENCES Course(course_id))
@@ -43,9 +45,9 @@ student-**takes**-exam
     section_id FOREIGN KEY REFERENCES section(section_id),
     PRIMARY KEY (exam_id)
   )
+```
 
 ---
-
 
 > 题目二：如果一个关系模式中只有两个属性，证明该关系模式必定属于BCNF。
 
