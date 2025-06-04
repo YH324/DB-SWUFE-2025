@@ -16,14 +16,40 @@ student-**enrolls**-section
 section-**belongsto**-course
 exam-**in**-section
 student-**takes**-exam
- 
-![7.1.png]
+
+![](../image/7.1.png)
 
 > 2. 写出上面E-R图的关系模式（要求注明主码）。
+- student(s_id PRIMARY KEY, name)
+- course(course_id PRIMARY KEY, title)
+- section(section_id PRIMARY KEY, semester, course_id FOREIGN KEY REFERENCES Course(course_id))
+- exam(exam_id PRIMARY KEY, date, type, section_id FOREIGN KEY REFERENCES section(section_id))
+
+- enrolls(s_id FOREIGN KEY REFERENCES student(s_id),
+    section_id FOREIGN KEY REFERENCES section(section_id),
+    PRIMARY KEY (s_id, section_id))
+- takes(
+    s_id FOREIGN KEY REFERENCES student(s_id),
+    exam_id FOREIGN KEY REFERENCES exam(exam_id),
+    grade,
+    PRIMARY KEY (s_id, exam_id))
+- belongsto(
+    section_id FOREIGN KEY REFERENCES section(section_id),
+    course_id  FOREIGN KEY REFERENCES course(course_id),
+    PRIMARY KEY (section_id)
+  )
+- In(
+    exam_id FOREIGN KEY REFERENCES exam(exam_id),
+    section_id FOREIGN KEY REFERENCES section(section_id),
+    PRIMARY KEY (exam_id)
+  )
 
 ---
 
+
 > 题目二：如果一个关系模式中只有两个属性，证明该关系模式必定属于BCNF。
+
+![](../image/7.2.png)
 
 ---
 
@@ -33,3 +59,9 @@ student-**takes**-exam
 > - CD → AB
 > 请给出一个满足BCNF的分解，并说明你的分解符合BCNF。
 
+由题，CD是候选码。分解：
+- R1(A, B, C)：A → BC，满足BCNF
+- R2(A, D, E)：无函数依赖，满足BCNF
+- R3(B, C, E)：BC → E，满足BCNF
+
+> 每个依赖的左边在其所在子关系中为超码,所有依赖被保留。
