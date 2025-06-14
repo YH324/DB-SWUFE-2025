@@ -1,6 +1,6 @@
 # DB-SWUFE
 
-[**Homework**](homework) & Project & [**Self-Evaluation**](#自我评价及结语)
+[Homework](homework) & Project & [Self-Evaluation](#自我评价及结语)
 
 - [intro](#w1-intro)
 - [关系模型](#w2-relational-model)
