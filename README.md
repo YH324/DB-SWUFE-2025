@@ -325,6 +325,8 @@ SELECT ... WHERE EXISTS (SELECT 1 FROM xxx);
 ---
 
 ## w7、8-多表JOIN与查询优化
+
+> 从这里开始有很多需要巩固的知识点
  
 ### 学习
 
@@ -421,7 +423,228 @@ SELECT ... WHERE EXISTS (SELECT 1 FROM xxx);
 
 ---
 
+## w9、10-函数与过程、数据库设计
 
+### W9：函数与过程、动态 SQL 与 SQL 注入
+
+1. 函数 & 过程基础
+   - 函数：返回值，有输入输出
+     ```sql
+     CREATE FUNCTION add(i integer, j integer)
+     RETURNS integer AS $$ SELECT i + j; $$ LANGUAGE SQL;
+     ```
+   - 过程：执行操作，无返回值（一般用于更新/插入等）
+     ```sql
+     CREATE PROCEDURE add2(integer, integer) AS $$ SELECT $1 + $2; $$ LANGUAGE SQL;
+     ```
+> 函数-计算，过程-执行
+
+2. plpgsql
+   - 可以写变量、控制结构等，比纯 SQL 强大
+     ```sql
+     CREATE FUNCTION deptCount(varchar)
+     RETURNS integer AS $$
+     DECLARE d_count integer;
+     BEGIN
+       SELECT count(*) INTO d_count FROM instructor WHERE dept_name = $1;
+       RETURN d_count;
+     END;
+     $$ LANGUAGE plpgsql;
+     ```
+
+3. 动态 SQL 与程序访问
+   - 编程语言可以访问 DB（典型架构：B/S 模式）
+   - JDBC / ODBC / **psycopg2** 等驱动起桥梁作用
+   - ORM 框架如 SQLAlchemy 统一不同 DBMS 语法
+> w11上机使用了psycopg2，感觉很方便
+
+4. SQL注入
+   - 拼接 SQL 语句易遭攻击，比如：
+     ```sql
+     name = "zhongpu"
+     pswd = "' or '1'='1"
+     ```
+     导致：
+     ```sql
+     SELECT * FROM users WHERE name='zhongpu' AND pswd='' or '1'='1';
+     ```
+> 所以写 web 登录功能时别直接拼接 SQL
+
+### W10：数据库设计，ER 模型与关系模式转化
+
+1. 数据库设计流程
+   - 需求分析 → 概念设计（ER）→ 逻辑设计（schema）→ 物理设计
+   - 先画图，再设计
+
+2. ER 模型
+   - 实体集：有属性，有主码
+   - 联系集：描述实体之间的关系
+   - 属性可细分为：
+     - 简单 / 复合
+     - 单值 / 多值
+     - 派生属性（eg：age可由birth推出）
+
+3. 映射基数与约束
+   - 1:1、1:N、M:N
+   - 完全参与（两条线），部分参与（一条线）
+   - min..max 形式描述基数约束
+
+4. ER → 关系模式 转换规则
+   - 强实体集 → 对应一个关系，主码保留
+   - 弱实体集 → 主码 = 标识实体 + 分辨符
+   - 联系集：
+     - 包含参与实体主码
+     - 可能的描述性属性（**takes 中的 grade**）
+
+> teaches, takes, advisor等就是典型联系集
+
+5. 模式简化与合并
+   - 冗余模式删掉，**检查实体集彼此的属性**
+   - Many-to-One 联系可合并
+   - 注意保留所有约束信息！
+
+6. ER 模型的替代：UML 类图
+   - UML 图不仅能表示实体属性关系，还能表达继承、多态等面向对象结构
+
+
+### 小结
+
+关键词：
+   - W9：函数 function、过程 procedure、plpgsql、动态 SQL、SQL 注入、ORM
+   - W10：**ER 模型**、实体联系、弱实体、**ER→关系模式**
+
+学着写mermaid，画图很好用
+
+![](image/w910.png)
+
+---
+
+## w11-Python连接数据库与操作
+
+### 环境配置
+
+```python
+# 基础连接示例
+import psycopg2
+
+conn = psycopg2.connect(
+    host="localhost",
+    database="university",
+    user="postgres",
+    password="your_password"
+)
+```
+
+> 实际连这个的时候环境一直出错
+
+### 常见操作模式
+
+```python
+# 查询操作模板
+cursor = conn.cursor()
+cursor.execute("SELECT * FROM student WHERE dept_name = %s", ("Comp. Sci.",))
+results = cursor.fetchall()
+for row in results:
+    print(row)
+cursor.close()
+```
+
+> 🔍 *用了参数化查询，告别SQL注入隐患！*
+
+## Python与SQL的协作优势
+
+### 1. 数据处理流程
+- 从数据库抓取数据 → Python处理 → 结果可视化/存回DB
+- 批量操作简化（循环+SQL语句）
+
+```python
+# 批量插入示例
+student_data = [
+    ('12345', 'Zhang', 'Comp. Sci.', 100),
+    ('12346', 'Wang', 'Math', 90)
+]
+
+cursor = conn.cursor()
+for id, name, dept, tot_cred in student_data:
+    cursor.execute(
+        "INSERT INTO student VALUES (%s, %s, %s, %s)", 
+        (id, name, dept, tot_cred)
+    )
+conn.commit()  # 别忘了提交！
+```
+
+> ⚠️ *忘记commit导致我操作了半天数据没存上，debug花了20分钟！*
+
+### 2. ORM框架体验（SQLAlchemy）
+
+```python
+from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
+
+# 创建连接
+engine = create_engine('postgresql://postgres:password@localhost/university')
+Base = declarative_base()
+
+# 定义模型
+class Student(Base):
+    __tablename__ = 'student'
+    id = Column(String, primary_key=True)
+    name = Column(String)
+    dept_name = Column(String)
+    tot_cred = Column(Integer)
+
+# 查询示例
+Session = sessionmaker(bind=engine)
+session = Session()
+cs_students = session.query(Student).filter_by(dept_name='Comp. Sci.').all()
+```
+
+> 💡 *ORM用起来爽爆了！不用写SQL也能查询，Python对象和数据库记录无缝转换。虽然老师说会有性能损失，但开发效率提高太多了。*
+
+## 实际应用体会
+
+### 1. 数据分析与可视化
+- 结合Pandas处理查询结果
+- matplotlib/seaborn绘制图表
+
+```python
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# SQL查询结果转DataFrame
+df = pd.read_sql("SELECT dept_name, AVG(tot_cred) FROM student GROUP BY dept_name", conn)
+
+# 可视化
+plt.figure(figsize=(10, 6))
+plt.bar(df['dept_name'], df['avg'])
+plt.title('平均学分 - 各系对比')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
+```
+
+> 🎨 *终于明白为什么数据科学家都用Python了，一行代码就能把SQL结果变成漂亮图表！*
+
+### 2. Web应用后端集成
+- Flask/Django + PostgreSQL构建完整应用
+- API设计与数据库交互
+
+> 🔄 *课程项目用Flask做了个选课系统，Python代码负责逻辑，SQL负责数据，完美配合！*
+
+## 思考总结
+
+Python和SQL的结合就像是"大脑+记忆库"的完美搭配。SQL擅长高效存储和查询结构化数据，Python则提供了灵活的处理逻辑和友好的使用界面。
+
+> 🧠 *总算知道为什么老师一直强调SQL和编程语言都要学了。单独用SQL写复杂逻辑太痛苦，单用Python存大量数据又不现实，结合是王道！*
+
+> 🌟 *最大收获：理解了"分层设计"的重要性——数据层(SQL)、业务层(Python函数)、表示层(Web/可视化)各司其职，代码清晰又高效。*
+
+---
+
+你想了解我第12周的触发器、事务、隔离级别的学习总结吗？🔄✨
+
+> provided by [EasyChat](https://site.eqing.tech/)
 
 
 
