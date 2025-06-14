@@ -1,14 +1,17 @@
 # DB-SWUFE
-Homework & Project & Self-Evaluation
+[Homework](homework) & Project & [Self-Evaluation](#自我评价)
 
-- [intro](##w1-intro)
-- [关系模型](##w2-relationalmodel)
-- [基础sql](##w3-sql)
-- [基础sql操作](##w4-上机)
-- [模式分解原则与算法](#模式分解原则与算法)
-- [存储、索引与事务（简要）](#存储索引与事务简要)
-- [Mermaid 图总结](#mermaid-图总结)
-
+- [intro](#w1-intro)
+- [关系模型](#w2-relational-model)
+- [基础sql](#w3-sql)
+- [基础sql操作](#w4-上机)
+- [聚合查询&增删改](#w5、6-聚合查询与增删改)
+- [JOIN与查询优化](#w7、8-多表JOIN与查询优化)
+- [函数与过程、数据库设计](#w9、10-函数与过程、数据库设计)
+- [Python连接数据库](#w11-Python连接数据库与操作)
+- [ER&NF](#w12、13-ER模型、函数依赖与范式分解)
+- [theory](#w14~16-存储、索引与事务)
+- [期末设计](#w14~16-期末设计)
 
 ## w1-intro
 
@@ -44,7 +47,7 @@ Homework & Project & Self-Evaluation
 
 ---
 
-## w2-relationalmodel
+## w2-relational model
 
 本周的学习深入到了抽象的**关系代数**，虽然完成了作业，但在初见关系代数时，确实感到了理论的挑战性，尤其是在并、交、差等集合运算上花费了较多时间才理清思路。
 
@@ -647,7 +650,7 @@ _我负责的部分是**检查SQL查询语句的正确性，如果查询语句�
 
 _在初步的版本中，我们的设计是接受sql语句输入（第一部分完成了text2sql），而后通过几个llm进行转化（如果text2sql有误）、验证、纠错、核查、输出建议等，同时引入ddl.sql作为长期记忆验证结构错误问题。调试无误后发布了第一个版本进行调用和流程嵌入。不过注意到agent设计本身其实支持数据库操作，目前的优化设想是在这个agent中加入数据库操作，通过实际反馈进行纠错和输出建议，所以还在努力修改中……_
 
----
+
 
 
 
