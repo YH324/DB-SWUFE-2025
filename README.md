@@ -1,6 +1,9 @@
 # DB-SWUFE
 Homework & Project & Self-Evaluation
 
+
+
+
 ## w1-intro
 
 本周内容以宏观概念为主，通过老师的讲解和资料阅读，对数据库有了初步认识。
@@ -513,9 +516,7 @@ SELECT ... WHERE EXISTS (SELECT 1 FROM xxx);
    - W9：函数 function、过程 procedure、plpgsql、动态 SQL、SQL 注入、ORM
    - W10：**ER 模型**、实体联系、弱实体、**ER→关系模式**
 
-学着写mermaid，画图很好用
-
-![](image/w910.png)
+过程中开始学写mermaid
 
 ---
 
@@ -535,116 +536,117 @@ conn = psycopg2.connect(
 )
 ```
 
-> 实际连这个的时候环境一直出错
-
-### 常见操作模式
-
-```python
-# 查询操作模板
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM student WHERE dept_name = %s", ("Comp. Sci.",))
-results = cursor.fetchall()
-for row in results:
-    print(row)
-cursor.close()
+> 实际连这个的时候环境一直出错，排查是win的终端和python版本问题，最后解决：
+```bash
+python -m venv env
 ```
 
-> 🔍 *用了参数化查询，告别SQL注入隐患！*
-
-## Python与SQL的协作优势
-
-### 1. 数据处理流程
-- 从数据库抓取数据 → Python处理 → 结果可视化/存回DB
-- 批量操作简化（循环+SQL语句）
-
 ```python
-# 批量插入示例
-student_data = [
-    ('12345', 'Zhang', 'Comp. Sci.', 100),
-    ('12346', 'Wang', 'Math', 90)
-]
+import psycopg
 
-cursor = conn.cursor()
-for id, name, dept, tot_cred in student_data:
-    cursor.execute(
-        "INSERT INTO student VALUES (%s, %s, %s, %s)", 
-        (id, name, dept, tot_cred)
-    )
-conn.commit()  # 别忘了提交！
+with psycopg.connect("dbname=mydb user=postgres port=5432 password=PSWD") as conn:
+    with conn.cursor() as cur:
+        # 1. 创建表（如果不存在）
+        cur.execute('''
+        CREATE TABLE IF NOT EXISTS users1 (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            age INT NOT NULL
+        )
+        ''')
+
+        # 2. 增：插入数据
+        cur.execute("INSERT INTO users1 (name, age) VALUES (%s, %s)", ('Alice', 30))
+
+        # 3. 查：查询数据
+        cur.execute("SELECT * FROM users1")
+        records = cur.fetchall()
+        print("查询结果:", records)
+
+        # 4. 改：更新数据
+        cur.execute("UPDATE users1 SET age = %s WHERE name = %s", (31, 'Alice'))
+
+        # 5. 删：删除数据
+        cur.execute("DELETE FROM users1 WHERE name = %s", ('Alice',))
+
+        # 无需显式提交，因为 `with` 会自动提交事务
+        cur.execute("SELECT * FROM users1")
+        records = cur.fetchall()
+        print(records)
 ```
-
-> ⚠️ *忘记commit导致我操作了半天数据没存上，debug花了20分钟！*
-
-### 2. ORM框架体验（SQLAlchemy）
-
-```python
-from sqlalchemy import create_engine, Column, Integer, String
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-
-# 创建连接
-engine = create_engine('postgresql://postgres:password@localhost/university')
-Base = declarative_base()
-
-# 定义模型
-class Student(Base):
-    __tablename__ = 'student'
-    id = Column(String, primary_key=True)
-    name = Column(String)
-    dept_name = Column(String)
-    tot_cred = Column(Integer)
-
-# 查询示例
-Session = sessionmaker(bind=engine)
-session = Session()
-cs_students = session.query(Student).filter_by(dept_name='Comp. Sci.').all()
-```
-
-> 💡 *ORM用起来爽爆了！不用写SQL也能查询，Python对象和数据库记录无缝转换。虽然老师说会有性能损失，但开发效率提高太多了。*
-
-## 实际应用体会
-
-### 1. 数据分析与可视化
-- 结合Pandas处理查询结果
-- matplotlib/seaborn绘制图表
-
-```python
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# SQL查询结果转DataFrame
-df = pd.read_sql("SELECT dept_name, AVG(tot_cred) FROM student GROUP BY dept_name", conn)
-
-# 可视化
-plt.figure(figsize=(10, 6))
-plt.bar(df['dept_name'], df['avg'])
-plt.title('平均学分 - 各系对比')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
-```
-
-> 🎨 *终于明白为什么数据科学家都用Python了，一行代码就能把SQL结果变成漂亮图表！*
-
-### 2. Web应用后端集成
-- Flask/Django + PostgreSQL构建完整应用
-- API设计与数据库交互
-
-> 🔄 *课程项目用Flask做了个选课系统，Python代码负责逻辑，SQL负责数据，完美配合！*
-
-## 思考总结
-
-Python和SQL的结合就像是"大脑+记忆库"的完美搭配。SQL擅长高效存储和查询结构化数据，Python则提供了灵活的处理逻辑和友好的使用界面。
-
-> 🧠 *总算知道为什么老师一直强调SQL和编程语言都要学了。单独用SQL写复杂逻辑太痛苦，单用Python存大量数据又不现实，结合是王道！*
-
-> 🌟 *最大收获：理解了"分层设计"的重要性——数据层(SQL)、业务层(Python函数)、表示层(Web/可视化)各司其职，代码清晰又高效。*
+> 操作还是很方便的，特别是在本地设计项目和分析的时候
 
 ---
 
-你想了解我第12周的触发器、事务、隔离级别的学习总结吗？🔄✨
+## w12、13-ER模型、函数依赖与范式分解
 
-> provided by [EasyChat](https://site.eqing.tech/)
+1. ER模型与关系模式
+-   回顾**ER图 → 关系模式**：将业务逻辑（实体、关系）转化为数据库的物理结构（表、字段、外键）
+    -   实体 → 表
+    -   属性 → 字段
+    -   关系 → 外键 或 中间表
+
+2. 好的模式 vs 坏的模式
+好坏的区分取决于**将所有信息塞入一张大表是否会导致**：
+   -  数据冗余：信息重复存储
+   -  更新异常：修改一处需同步多处
+   -  插入/删除异常：因主键约束或数据连带关系，导致无法插入新实体或丢失有用信息
+
+3. 函数依赖
+函数依赖描述了属性间的决定关系。
+> 对于关系模式 $R$ 的任意实例 $r$，其中的任意两个元组（行）$t_1$ 和 $t_2$：
+> 如果 $t_1[α] = t_2[α]$，那么必然有 $t_1[β] = t_2[β]$，称函数依赖 $α → β$ 在关系模式 $R$ 上成立
+> 属性集 $α$ 的值一旦确定，属性集 $β$ 的值也就唯一确定了，例如，`学号` → `姓名`
+
+   -  平凡依赖：$β ⊆ α$。如 `(学号, 姓名) → 学号`
+   -  非平凡依赖：$β ⊄ α$
+   -  闭包 $F^+$：由已知的函数依赖集 $F$ 能推导出的所有函数依赖
+
+4. 核心范式
+
+| 范式| 定义|
+| :--- | :--- |
+|BCNF|对 $F^+$ 中所有非平凡函数依赖 $α → β$，**$α$ 必须是关系 $R$ 的一个超码 (Superkey)**。<br><br> **解释**：任何想决定其他属性的决定因素（$α$），自己必须得是超码，即它自身就能唯一确定一行数据 |
+|3NF|对 $F^+$ 中所有非平凡函数依赖 $α → β$，以下三个条件**至少满足一个**：<br>1. $α$ 是关系 $R$ 的一个超码。<br>2. $α → β$ 是平凡依赖 (此条可忽略，因前提是非平凡)。<br>3. 属性集 $(β - α)$ 中的每个属性都包含在 $R$ 的某个候选码中（即它们都是**主属性**）。<br><br> **解释**：3NF做了一些让步。如果决定因素$α$不是超码，那么它决定的属性 $β$ 必须是主属性，不能是普通的非主属性。这允许了少量冗余，以换取不丢失函数依赖 |
+
+5. 模式分解
+- 无损连接：分解后的表必须能通过自然连接完美还原出原始数据
+    > 将关系 $R$ 分解为 $R_1$ 和 $R_2$。如果以下两个函数依赖至少有一个属于 $F^+$，则分解是无损的：
+    > 1.  $(R_1 ∩ R_2) → R_1$
+    > 2.  $(R_1 ∩ R_2) → R_2$
+
+    > 两张新表的共同属性，必须能唯一决定其中一张表的所有属性。
+- 依赖保持：原有的函数依赖关系在分解后的新表中依然成立，无需通过Join操作来验证
+
+> 这部分学起来问题其实挺多的，还需加强复习
+
+[ER & NF作业].(homework/DBhomework07.md)
+
+---
+
+## w14~16-存储、索引与事务
+
+1. 存储机制
+- 页（Page）：数据最小传输单元。
+- 组织方式：堆文件（无序）、顺序文件（有序）等。
+- 存储模型：行存储（OLTP）、列存储（OLAP）。
+
+2. 索引机制
+- **B+树索引**：支持范围与排序，应用最广。
+- 哈希索引：仅支持等值查询，速度极快。
+- 聚集 vs 非聚集：决定数据物理存储是否与索引顺序一致。
+
+3. 事务管理（ACID）
+- 原子性 (A), 一致性 (C), 隔离性 (I), 持久性 (D)。
+
+## w14~16-期末设计
+
+_我负责的部分是**检查SQL查询语句的正确性，如果查询语句有错误，能够给出错误的原因，要求报错信息尽可能用户友好，并且能够修改建议**，一开始天然觉得这个任务模块很适合LLM agent实现，所以在一些低代码平台进行工作流设计和调试。最初的想法是python工具包判断语法错误+LLM优化输出，但在实际操作过程中遇到了不兼容等问题暂时作罢。_
+
+_在初步的版本中，我们的设计是接受sql语句输入（第一部分完成了text2sql），而后通过几个llm进行转化（如果text2sql有误）、验证、纠错、核查、输出建议等，同时引入ddl.sql作为长期记忆验证结构错误问题。调试无误后发布了第一个版本进行调用和流程嵌入。不过注意到agent设计本身其实支持数据库操作，目前的优化设想是在这个agent中加入数据库操作，通过实际反馈进行纠错和输出建议，所以还在努力修改中……_
+
+---
+
 
 
 
