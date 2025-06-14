@@ -364,6 +364,7 @@ SELECT ... WHERE EXISTS (SELECT 1 FROM xxx);
      - `INNER JOIN`: 满足条件的元组配对
      - `LEFT/RIGHT OUTER JOIN`: 保留左/右表未匹配元组，用 `NULL` 补全
      - `FULL OUTER JOIN`: 所有元组均保留，未匹配部分填 NULL
+![](image/w78eg1.png)
 
 2. 例题学习
    - 找出讲课数为 0 的老师：
