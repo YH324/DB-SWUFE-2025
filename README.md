@@ -314,6 +314,9 @@ SELECT ... WHERE EXISTS (SELECT 1 FROM xxx);
   ```
 **select 字句的alias（重命名）不能用于where**
 
+### 实践
+完成了 [Homework 4](homework/DBhomework04.md)
+
 ### 小结
 
 关键词：**`null`**、三值逻辑、`coalesce`、**聚集函数**、分组聚集、`having`、**嵌套子查询**、`> some`、`exists`、`insert/delete/update`、`alter table`、约束、rank 排名
@@ -322,6 +325,105 @@ SELECT ... WHERE EXISTS (SELECT 1 FROM xxx);
 ---
 
 ## w7、8-多表JOIN与查询优化
+ 
+### 学习
+
+1. **多表 JOIN 查询（连接类型与语义）**
+   - 等值连接 vs. 自然连接：
+     ```sql
+     SELECT name, course_id
+     FROM student JOIN takes ON student.id = takes.id;
+   
+     -- 等价于自然连接（natural join）
+     SELECT name, course_id
+     FROM student NATURAL JOIN takes;
+     ```
+     > natural join 会自动匹配所有同名属性！需警惕隐含错误。
+   
+   - 常见写法
+     - 使用 `ON` 指定任意连接条件
+     - 使用 `USING(attr)` 指定连接属性（避免属性重复）
+     - SQL 默认 `JOIN` 是 `INNER JOIN`
+   
+   - 连接类型
+     - `INNER JOIN`: 满足条件的元组配对
+     - `LEFT/RIGHT OUTER JOIN`: 保留左/右表未匹配元组，用 `NULL` 补全
+     - `FULL OUTER JOIN`: 所有元组均保留，未匹配部分填 NULL
+
+2. 例题学习
+   - 找出讲课数为 0 的老师：
+     ```sql
+     SELECT ID, count(sec_id)
+     FROM instructor NATURAL LEFT JOIN teaches
+     GROUP BY ID;
+     ```
+   
+   - 课程选课人数统计（包含 0 人课程段）：
+     ```sql
+     SELECT course_id, sec_id, count(id)
+     FROM section NATURAL LEFT JOIN takes
+     WHERE semester = 'Fall' AND year = 2017
+     GROUP BY course_id, sec_id;
+     ```
+   - 多表嵌套重写：
+     使用 `with` 语句命名临时表，提升可读性和性能
+     
+3. 高级数据类型
+   - 日期与时间：
+     - `date`, `time`, `timestamp`
+     - 时间差类型：`interval`
+     ```sql
+     SELECT current_timestamp, current_date;
+     SELECT timestamp '2023-12-25 13:14:15';
+     ```
+   **PG的数据类型更丰富！**
+   - 自定义类型：
+     - `ENUM`：如健康码颜色 `('red', 'yellow', 'green')`
+     - `point`：几何坐标
+     - `serial`：自增主键
+
+ 4. 类型转换与格式化
+   - 标准语法：
+     ```sql
+     SELECT CAST('2025-06-01' AS date);
+     -- PG独有的数据类型转换符号
+     SELECT '3.14'::decimal;
+     ```
+   - 格式化：
+     ```sql
+     SELECT to_char(42, '00999');  -- 输出 00042
+     SELECT to_date('08-07 2022', 'MM-DD YYYY');
+     ```
+     
+5. 授权机制
+   - `GRANT` 授权特定角色：
+     ```sql
+     GRANT SELECT, INSERT ON department TO lilei;
+     ```
+   - PG角色统一采用 `ROLE` 管理
+   - 管理命令：
+     ```sql
+     \du             -- 查看所有角色
+     CREATE ROLE hanmeimei;
+     DROP ROLE lilei;
+     ```
+   - 使用 pg_dump 进行数据库备份
+
+### 实践
+
+完成了
+
+### 小结
+
+关键词：**inner/outer join, natural join**, using/on, **时间/日期类型**, enum/point, cast/to_char, grant/role, exists/in vs. join, 查询优化
+
+![](image/w78.png)
+
+---
+
+
+
+
 
 
 
